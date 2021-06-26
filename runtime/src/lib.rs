@@ -22,7 +22,7 @@ use sp_version::RuntimeVersion;
 
 // A few exports that help ease life for downstream crates.
 pub use frame_support::{
-	construct_runtime, match_type, parameter_types,
+	construct_runtime, match_type, parameter_types, PalletId,
 	traits::{All, IsInVec, Randomness},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
@@ -30,6 +30,7 @@ pub use frame_support::{
 	},
 	StorageValue,
 };
+use frame_system::{EnsureRoot};
 use frame_system::limits::{BlockLength, BlockWeights};
 pub use pallet_balances::Call as BalancesCall;
 pub use pallet_timestamp::Call as TimestampCall;
@@ -52,8 +53,8 @@ use xcm_builder::{
 };
 use xcm_executor::{Config, XcmExecutor};
 
-/// Import the template pallet.
-pub use template;
+/// Import the qf pallet.
+pub use qf;
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
@@ -441,10 +442,42 @@ impl cumulus_pallet_dmp_queue::Config for Runtime {
 impl pallet_aura::Config for Runtime {
 	type AuthorityId = AuraId;
 }
+parameter_types! {
+	// pow(10,12) => Unit, for easy fee control, we use pow(10,9)
+    pub const VoteUnit: u128 = 1000000000;
+	// The base of unit per vote, should be 1 Unit of token for each vote
+    pub const NumberOfUnit: u128 = 1000;
+    // The ratio of fee for each trans, final value should be FeeRatio/NumberOfUnit
+    pub const FeeRatio: u128 = 60;
+	pub const QuadraticFundingPalletId: PalletId = PalletId(*b"py/quafd");
+	pub const NameMinLength: usize = 3;
+	pub const NameMaxLength: usize = 32;
 
-/// Configure the pallet template in pallets/template.
-impl template::Config for Runtime {
+}
+/// Configure the pallet qf in pallets/quadratic-funding.
+impl qf::Config for Runtime {
 	type Event = Event;
+	type Currency = pallet_balances::Pallet<Runtime>;
+	type PalletId = QuadraticFundingPalletId;
+	 // Use the UnitOfVote from the parameter_types block.
+	 type UnitOfVote = VoteUnit;
+ 
+	 // Use the MinNickLength from the parameter_types block.
+	 type NumberOfUnitPerVote = NumberOfUnit;
+
+	 // No action is taken when deposits are forfeited.
+	 type Slashed = ();
+ 
+	 // Use the FeeRatio from the parameter_types block.
+	 type FeeRatioPerVote = FeeRatio;
+	// The minimum length of project name
+	type NameMinLength = NameMinLength;
+
+	// The maximum length of project name
+	type NameMaxLength = NameMaxLength;
+
+	// Origin who can control the round
+	type AdminOrigin = EnsureRoot<AccountId>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -474,8 +507,8 @@ construct_runtime!(
 		CumulusXcm: cumulus_pallet_xcm::{Pallet, Call, Event<T>, Origin} = 52,
 		DmpQueue: cumulus_pallet_dmp_queue::{Pallet, Call, Storage, Event<T>} = 53,
 
-		//Template
-		TemplatePallet: template::{Pallet, Call, Storage, Event<T>},
+		//Qf pallet
+		QfPallet: qf::{Pallet, Call, Storage, Event<T>},
 	}
 );
 

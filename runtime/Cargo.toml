@@ -19,7 +19,7 @@ log = { version = "0.4.14", default-features = false }
 serde = { version = '1.0.119', optional = true, features = ['derive'] }
 
 # Local Dependencies
-template = { package = 'pallet-template', path = '../pallets/template', default-features = false }
+qf = { package = 'pallet-qf', path = '../pallets/quadratic-funding', default-features = false }
 
 # Substrate Dependencies
 ## Substrate Primitive Dependencies
@@ -80,7 +80,7 @@ runtime-benchmarks = [
 	'frame-system/runtime-benchmarks',
 	'pallet-balances/runtime-benchmarks',
 	'pallet-timestamp/runtime-benchmarks',
-	'template/runtime-benchmarks',
+	'qf/runtime-benchmarks',
 ]
 std = [
 	"codec/std",
@@ -117,5 +117,5 @@ std = [
 	"xcm-executor/std",
 	"pallet-aura/std",
 	"sp-consensus-aura/std",
-	'template/std',
+	'qf/std',
 ]

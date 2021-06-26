@@ -1,7 +1,7 @@
 [package]
-name = 'pallet-template'
+name = 'pallet-qf'
 authors = ['Anonymous']
-description = 'FRAME pallet template for defining custom runtime logic.'
+description = 'FRAME pallet quadratic funding for defining custom runtime logic.'
 version = '3.0.0'
 license = 'Unlicense'
 homepage = 'https://substrate.dev'
@@ -13,7 +13,10 @@ targets = ['x86_64-unknown-linux-gnu']
 
 [dependencies]
 codec = { package = 'parity-scale-codec', version = '2.0.0', features = ['derive'], default-features = false }
-
+pallet-balances = { version = "3.0.0", default-features = false}
+sp-std = { default-features = false, version = '3.0.0' }
+sp-runtime = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.3' , default-features = false}
+# sp-runtime = { version = "3.0.0", default-features = false }
 frame-benchmarking = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.3', default-features = false, optional = true }
 frame-support = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.3', default-features = false }
 frame-system = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.3', default-features = false }
@@ -32,4 +35,6 @@ std = [
 	'frame-support/std',
 	'frame-system/std',
 	'frame-benchmarking/std',
+	'pallet-balances/std',
+	'sp-runtime/std',
 ]
