@@ -1,4 +1,4 @@
-# Dora Factory Parachain Template
+# Quantum Factory Parachain Model
 
 A parachain node template for Dora Factory Dao-as-a-Service template.
 
